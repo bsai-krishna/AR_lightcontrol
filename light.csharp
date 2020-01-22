@@ -1,0 +1,229 @@
+//LightSwitch Script
+
+//IMPORTANT: PLEASE READ
+
+//......................
+
+// IN ORDER FOR THIS SCRIPT
+
+// TO RUN, YOU MUST ADD A
+
+// BOX COLLIDER TO YOUR 
+
+//LIGHTSWITCH!
+
+//.......................
+
+//THIS SCRIPT IS TRIGGERED
+
+//BY CLICKING THE LIGHTSWITCH
+
+//BOX COLLIDER
+
+//......................
+
+
+
+
+
+using UnityEngine;
+
+using System.Collections;
+
+
+
+// If you change the name of your script, change the public
+
+// class below from LightSwitch to what you named the script.
+
+public class LightSwitch : MonoBehaviour {
+
+	
+
+	// Declares the light game object as "DragYourLightHere".
+
+	// Do not try to drag your light from unity into the actual script.
+
+	// It is named like this so that the Unity editor will display where to
+
+	// drag your light.
+
+	
+
+	// Declares the two states for the lightswitch: on or off.
+
+	private enum State {
+
+		on,
+
+		off
+
+	}
+
+	public bool ison ;
+
+	
+
+	// Declares the State as state.
+
+	private State state;
+
+	
+
+	// Initializes the lightswitch so that the script knows the lights are on to
+
+	// start with.
+
+	void Start () {
+
+		state = LightSwitch.State.on;
+
+		ison = false;
+
+		
+
+	}
+
+	void Update() {
+
+		//for (var i = 0; i < Input.touchCount; ++i) {
+
+			if (Input.GetTouch(0).phase == TouchPhase.Began)
+
+			{
+
+			
+
+				RaycastHit hit;
+
+				Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+
+			if (Physics.Raycast(ray, out hit) && (hit.transform.gameObject == transform.gameObject))
+
+				{
+
+					if (state == LightSwitch.State.on)
+
+						TurnOff ();
+
+					else
+
+						TurnOn ();
+
+				}
+
+
+
+			}
+
+		//}
+
+	}
+
+	// Turn on subprocedure: plays the TurnOn Animation, sets the state to on, and enables
+
+	// the light.
+
+	private void TurnOn() {
+
+		animation.Play ("TurnOnAnimation");
+
+		state = LightSwitch.State.on;
+
+		ison = true;
+
+		SendLigt ();
+
+		
+
+	}
+
+	
+
+	//Turn off subprocedure: plays the TurnOff Animation, sets the state to off, and
+
+	// disables the light.
+
+	private void TurnOff() {
+
+		animation.Play ("TurnOffAnimation");
+
+		state = LightSwitch.State.off;
+
+		ison = false;
+
+		SendLigt ();
+
+		
+
+	}
+
+	
+
+	
+
+	private void SendLigt(){
+
+		string url = "http://yourip/Hue.php";
+
+		
+
+		WWWForm form = new WWWForm();
+
+		if (ison) {
+
+			form.AddField("id", "1");
+
+			form.AddField("bri", "255");
+
+			form.AddField("bulb", "1");
+
+			form.AddField("light", "true");
+
+			form.AddField("xy", "[0.35,0.3]");
+
+
+
+		} else {
+
+			form.AddField("light", "false");
+
+		}
+
+		WWW www = new WWW(url, form);
+
+		StartCoroutine(WaitForRequest(www));
+
+	}
+
+	
+
+	IEnumerator WaitForRequest(WWW www)
+
+	{
+
+		yield return www;
+
+		
+
+		// check for errors
+
+		if (www.error == null)
+
+		{
+
+			Debug.Log("WWW Ok!: " + www.text);
+
+		} else {
+
+			Debug.Log("WWW Error: "+ www.error);
+
+		}    
+
+	}    
+
+	
+
+}
+
+ 
