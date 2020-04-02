@@ -4,6 +4,3 @@ This project has a switch and buttons of different colours to change the hue of 
 Hope u enjoy the project...
 
 Cheers!!!
-
-by : B SAI KRISHNA
- 
